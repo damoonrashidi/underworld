@@ -1,4 +1,4 @@
-use std::{ops::SubAssign, time::Duration};
+use std::time::Duration;
 
 use crate::entity::Entity;
 
@@ -19,8 +19,12 @@ impl Sword {
 
 impl Item for Sword {
     fn on_use(&mut self) {
-        println!("used sword");
-        self.cooldown = Duration::from_millis(500);
+        if self.cooldown.is_zero() {
+            println!("used sword");
+            self.cooldown = Duration::from_millis(500);
+        } else {
+            println!("sword still has {}ms cooldown", self.cooldown.as_millis());
+        }
     }
 }
 
@@ -30,6 +34,6 @@ impl Entity for Sword {
     }
 
     fn on_tick(&mut self) {
-        self.cooldown.sub_assign(Duration::from_millis(8));
+        self.cooldown = self.cooldown.saturating_sub(Duration::from_millis(8));
     }
 }

@@ -3,6 +3,7 @@ use sdl2::{event::Event, keyboard::Keycode, pixels::Color, rect::Rect};
 use std::time::Duration;
 use underworld::{
     character::{player::Player, Character},
+    entity::Entity,
     item::sword::Sword,
     map::{coord, direction::Direction},
     state::State,
@@ -32,6 +33,8 @@ fn main() -> Result<(), String> {
     let mut event_pump = sdl_context.event_pump()?;
 
     'game_loop: loop {
+        state.player.inventory.on_tick();
+
         for event in event_pump.poll_iter() {
             match event {
                 Event::KeyDown {

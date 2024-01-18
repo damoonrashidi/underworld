@@ -1,4 +1,4 @@
-use crate::item::Item;
+use crate::{entity::Entity, item::Item};
 use std::fmt::Debug;
 
 pub struct Inventory {
@@ -15,6 +15,18 @@ impl Inventory {
 
     pub fn get(&mut self, index: usize) -> Option<&mut Box<dyn Item>> {
         self.items.get_mut(index)
+    }
+}
+
+impl Entity for Inventory {
+    fn get_id(&self) -> String {
+        todo!("inventory");
+    }
+
+    fn on_tick(&mut self) {
+        for item in &mut self.items {
+            item.on_tick();
+        }
     }
 }
 

@@ -4,4 +4,7 @@ pub enum Mood {
     Docile,
     Aggro,
     Suspicious,
+    Friendly,
+    Talking,
+    Sleeping,
 }
