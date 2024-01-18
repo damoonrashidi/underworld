@@ -1,17 +1,18 @@
 extern crate sdl2;
-use sdl2::{event::Event, keyboard::Keycode, pixels::Color, rect::Rect};
+use sdl2::{event::Event, keyboard::Keycode, pixels::Color};
 use std::time::Duration;
 use underworld::{
     character::{player::Player, Character},
     entity::Entity,
     item::sword::Sword,
     map::{coord, direction::Direction},
+    render::Renderable,
     state::State,
 };
 
 fn main() -> Result<(), String> {
-    let sdl_context = sdl2::init()?;
-    let video_subsystem = sdl_context.video()?;
+    let ctx = sdl2::init()?;
+    let video_subsystem = ctx.video()?;
     let window = video_subsystem
         .window("Underworld", 800, 600)
         .position_centered()
@@ -22,15 +23,15 @@ fn main() -> Result<(), String> {
 
     let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
 
-    let mut player = Player::new(coord::Coord(0, 0));
+    let player = Player::new(coord::Coord(0, 0));
     let sword = Sword::new(5, Duration::from_millis(200));
 
-    player.add_item(Box::new(sword));
     let mut state = State::new(player);
+    state.player.add_item(Box::new(sword));
 
     println!("{state:?}");
 
-    let mut event_pump = sdl_context.event_pump()?;
+    let mut event_pump = ctx.event_pump()?;
 
     'game_loop: loop {
         state.player.inventory.on_tick();
@@ -46,24 +47,28 @@ fn main() -> Result<(), String> {
                     ..
                 } => {
                     state.player.reposition(Direction::West);
+                    state.player.dir = Direction::West;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Up),
                     ..
                 } => {
                     state.player.reposition(Direction::North);
+                    state.player.dir = Direction::North;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Right),
                     ..
                 } => {
                     state.player.reposition(Direction::East);
+                    state.player.dir = Direction::East;
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Down),
                     ..
                 } => {
                     state.player.reposition(Direction::South);
+                    state.player.dir = Direction::South;
                 }
                 Event::Quit { .. }
                 | Event::KeyDown {
@@ -80,13 +85,7 @@ fn main() -> Result<(), String> {
         canvas.clear();
 
         canvas.set_draw_color(Color::RGB(0, 120, 0));
-        #[allow(clippy::cast_possible_truncation, clippy::cast_possible_wrap)]
-        let _ = canvas.fill_rect(Rect::new(
-            state.player.pos.0 as i32 * 40,
-            state.player.pos.1 as i32 * 40,
-            40,
-            40,
-        ));
+        state.player.render(&mut canvas)?;
 
         canvas.present();
         std::thread::sleep(Duration::from_millis(10));

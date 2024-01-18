@@ -19,10 +19,6 @@ impl Inventory {
 }
 
 impl Entity for Inventory {
-    fn get_id(&self) -> String {
-        todo!("inventory");
-    }
-
     fn on_tick(&mut self) {
         for item in &mut self.items {
             item.on_tick();
