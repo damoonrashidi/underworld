@@ -2,10 +2,9 @@ use sdl2::{pixels::Color, rect::Rect, render::Canvas, video::Window};
 
 use crate::{
     character::player::inventory::Inventory,
-    entity::{hittable::Hittable, Entity},
+    entity::{hittable::Hittable, renderable::Renderable, Entity},
     item::Item,
     map::{coord::Coord, direction::Direction},
-    render::Renderable,
 };
 
 use super::Character;

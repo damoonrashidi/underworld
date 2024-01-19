@@ -3,10 +3,9 @@ use sdl2::{event::Event, keyboard::Keycode, pixels::Color};
 use std::time::Duration;
 use underworld::{
     character::{player::Player, Character},
-    entity::Entity,
+    entity::{renderable::Renderable, Entity},
     item::sword::Sword,
     map::{coord, direction::Direction},
-    render::Renderable,
     state::State,
 };
 
