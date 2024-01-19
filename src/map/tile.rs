@@ -8,6 +8,7 @@ pub enum Tile {
     Rock,
     Wall,
     Door,
+    Water,
 }
 
 impl From<char> for Tile {
@@ -21,6 +22,7 @@ impl From<char> for Tile {
             'T' => Self::Tree,
             '#' => Self::Wall,
             'A' => Self::Door,
+            '~' => Self::Water,
             _ => unreachable!(),
         }
     }
