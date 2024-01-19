@@ -1,5 +1,5 @@
 #[derive(Debug)]
-pub enum Tile {
+pub enum TileType {
     Empty,
     Ground,
     Grass,
@@ -11,7 +11,7 @@ pub enum Tile {
     Water,
 }
 
-impl From<char> for Tile {
+impl From<char> for TileType {
     fn from(value: char) -> Self {
         match value {
             '-' => Self::Empty,
