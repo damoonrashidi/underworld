@@ -2,6 +2,7 @@ use self::tiletype::TileType;
 
 pub mod coord;
 pub mod direction;
+pub mod tile;
 pub mod tiletype;
 
 #[derive(Debug)]

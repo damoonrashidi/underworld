@@ -1,15 +1,34 @@
-use std::fmt::Debug;
-
-use crate::character::player::Player;
+use crate::{action::Action, character::player::Player, entity::Entity};
+use std::{cell::RefCell, fmt::Debug, rc::Rc};
 
 pub struct State {
     pub player: Player,
+    pub entities: Vec<Rc<RefCell<dyn Entity>>>,
 }
 
 impl State {
     #[must_use]
-    pub fn new(player: Player) -> Self {
-        Self { player }
+    pub fn new(player: Player) -> Rc<RefCell<State>> {
+        Rc::new(RefCell::new(State {
+            player,
+            entities: vec![],
+        }))
+    }
+
+    pub fn add_entity(&mut self, entity: Rc<RefCell<dyn Entity>>) {
+        self.entities.push(entity);
+    }
+
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn dispatch(state: Rc<RefCell<State>>, action: &Action) {
+        let borrow_state = state.borrow();
+        let entities = borrow_state.entities.clone();
+        drop(borrow_state);
+
+        for entity in entities {
+            let mut ref_mut_entity = entity.borrow_mut();
+            ref_mut_entity.on_action(action.clone(), state.clone());
+        }
     }
 }
 

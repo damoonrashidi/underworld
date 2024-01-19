@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 use sdl2::{pixels::Color, rect::Rect, render::Canvas, video::Window};
 
 use crate::{
@@ -5,6 +7,7 @@ use crate::{
     entity::{hittable::Hittable, renderable::Renderable, Entity},
     item::Item,
     map::{coord::Coord, direction::Direction},
+    state::State,
 };
 
 use super::Character;
@@ -33,19 +36,18 @@ impl Player {
     pub fn add_item(&mut self, item: Box<dyn Item>) {
         self.inventory.add(item);
     }
-
-    pub fn use_item(&mut self, index: usize) {
-        let Some(item) = self.inventory.get(index) else {
-            println!("No item equipped at {index}");
-            return;
-        };
-
-        item.on_use();
-    }
 }
 
 impl Entity for Player {
+    fn get_id(&self) -> String {
+        "player".into()
+    }
+
     fn on_tick(&mut self) {}
+
+    fn on_action(&mut self, _action: crate::action::Action, _state: Rc<RefCell<State>>) {
+        todo!()
+    }
 }
 
 impl Hittable for Player {
