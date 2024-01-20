@@ -56,12 +56,12 @@ impl Hittable for Player {
 }
 
 impl Renderable for Player {
-    fn render(&self, ctx: &mut Canvas<Window>) -> Result<(), String> {
+    fn render(&self, displace: &Coord, ctx: &mut Canvas<Window>) -> Result<(), String> {
         ctx.set_draw_color(Color::RGB(0, 120, 40));
         #[allow(clippy::cast_possible_truncation, clippy::cast_possible_wrap)]
         ctx.fill_rect(Rect::new(
-            self.pos.0 as i32 * 40,
-            self.pos.1 as i32 * 40,
+            (self.pos.0 - displace.0) as i32 * 40,
+            (self.pos.1 - displace.1) as i32 * 40,
             40,
             40,
         ))

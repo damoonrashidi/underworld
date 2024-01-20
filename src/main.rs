@@ -96,11 +96,16 @@ fn main() -> Result<(), String> {
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         canvas.clear();
 
-        for tile in state.borrow().map.clone().tiles {
-            tile.render(&mut canvas)?;
+        let sb = state.borrow();
+
+        for tile in sb.map.clone().tiles {
+            tile.render(&sb.origin, &mut canvas)?;
         }
         canvas.set_draw_color(Color::RGB(0, 120, 0));
-        state.borrow_mut().player.render(&mut canvas)?;
+        state
+            .borrow_mut()
+            .player
+            .render(&state.borrow().origin, &mut canvas)?;
 
         canvas.present();
         std::thread::sleep(Duration::from_millis(16));

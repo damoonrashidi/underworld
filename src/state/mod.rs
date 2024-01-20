@@ -1,19 +1,27 @@
-use crate::{action::Action, character::player::Player, entity::Entity, map::Map};
+use crate::{
+    action::Action,
+    character::player::Player,
+    entity::Entity,
+    map::{coord::Coord, Map},
+};
 use std::{cell::RefCell, fmt::Debug, rc::Rc};
 
 pub struct State {
     pub player: Player,
     pub entities: Vec<Rc<RefCell<dyn Entity>>>,
     pub map: Map,
+    pub origin: Coord,
 }
 
 impl State {
     #[must_use]
     pub fn new(player: Player) -> Rc<RefCell<State>> {
+        let origin = Coord(player.pos.0, player.pos.1);
         Rc::new(RefCell::new(State {
             player,
             entities: vec![],
             map: Map { tiles: vec![] },
+            origin,
         }))
     }
 
