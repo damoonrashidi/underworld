@@ -18,10 +18,9 @@ impl Sword {
 impl Item for Sword {
     fn on_use(&mut self, state: Rc<RefCell<State>>) {
         if self.cooldown.is_zero() {
+            println!("sword attacked!");
             self.cooldown = Duration::from_millis(500);
-            State::dispatch(state.clone(), &Action::Item("sword"));
-        } else {
-            println!("sword still has {}ms cooldown", self.cooldown.as_millis());
+            State::dispatch(state.clone(), &Action::Item(self.get_id()));
         }
     }
 }
@@ -36,9 +35,8 @@ impl Entity for Sword {
     }
 
     fn on_action(&mut self, action: Action, state: Rc<RefCell<State>>) {
-        println!("sword on use happens here");
         match action {
-            Action::Item("sword") => self.on_use(state),
+            Action::Item(id) if id == *"sword" => self.on_use(state),
             action => {
                 println!("{action:?}");
             }

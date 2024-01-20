@@ -4,7 +4,7 @@ use std::{cell::RefCell, rc::Rc, time::Duration};
 use underworld::{
     action::Action,
     character::{player::Player, Character},
-    entity::renderable::Renderable,
+    entity::{renderable::Renderable, Entity},
     item::sword::Sword,
     map::{coord, direction::Direction},
     state::State,
@@ -23,60 +23,60 @@ fn main() -> Result<(), String> {
 
     let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
 
-    let player = Player::new(coord::Coord(0, 0));
+    let mut player = Player::new(coord::Coord(0, 0));
     let sword = Sword::new(5, Duration::from_millis(200));
+    player.add_item(sword.get_id());
 
     let state = State::new(player);
-    state.borrow_mut().add_entity(Rc::new(RefCell::new(sword)));
 
-    println!("{state:?}");
+    state.borrow_mut().add_entity(Rc::new(RefCell::new(sword)));
 
     let mut event_pump = ctx.event_pump()?;
 
     'game_loop: loop {
+        let borrow_state = state.borrow();
+        let entities = borrow_state.entities.clone();
+        drop(borrow_state);
+        for entity in entities {
+            let mut borrowed_entity = entity.borrow_mut();
+            borrowed_entity.on_tick();
+        }
+
         for event in event_pump.poll_iter() {
             match event {
                 Event::KeyDown {
                     keycode: Some(Keycode::Space),
                     ..
                 } => {
-                    State::dispatch(state.clone(), &Action::Item("sword"));
+                    State::dispatch(state.clone(), &Action::Item("sword".into()));
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Left),
                     ..
                 } => {
                     let mut state = state.borrow_mut();
-
-                    state.player.reposition(Direction::West);
-                    state.player.dir = Direction::West;
+                    state.player.walk(Direction::West);
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Up),
                     ..
                 } => {
                     let mut state = state.borrow_mut();
-
-                    state.player.reposition(Direction::North);
-                    state.player.dir = Direction::North;
+                    state.player.walk(Direction::North);
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Right),
                     ..
                 } => {
                     let mut state = state.borrow_mut();
-
-                    state.player.reposition(Direction::East);
-                    state.player.dir = Direction::East;
+                    state.player.walk(Direction::East);
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Down),
                     ..
                 } => {
                     let mut state = state.borrow_mut();
-
-                    state.player.reposition(Direction::South);
-                    state.player.dir = Direction::South;
+                    state.player.walk(Direction::South);
                 }
                 Event::Quit { .. }
                 | Event::KeyDown {

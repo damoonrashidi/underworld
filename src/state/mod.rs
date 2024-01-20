@@ -26,8 +26,9 @@ impl State {
         drop(borrow_state);
 
         for entity in entities {
-            let mut ref_mut_entity = entity.borrow_mut();
-            ref_mut_entity.on_action(action.clone(), state.clone());
+            if let Ok(mut ref_mut_entity) = entity.try_borrow_mut() {
+                ref_mut_entity.on_action(action.clone(), state.clone());
+            }
         }
     }
 }

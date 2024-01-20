@@ -5,7 +5,6 @@ use sdl2::{pixels::Color, rect::Rect, render::Canvas, video::Window};
 use crate::{
     character::player::inventory::Inventory,
     entity::{hittable::Hittable, renderable::Renderable, Entity},
-    item::Item,
     map::{coord::Coord, direction::Direction},
     state::State,
 };
@@ -33,7 +32,7 @@ impl Player {
         }
     }
 
-    pub fn add_item(&mut self, item: Box<dyn Item>) {
+    pub fn add_item(&mut self, item: String) {
         self.inventory.add(item);
     }
 }
@@ -73,12 +72,14 @@ impl Renderable for Player {
 }
 
 impl Character for Player {
-    fn reposition(&mut self, direction: Direction) {
+    fn walk(&mut self, direction: Direction) {
         self.pos = match direction {
             Direction::North => self.pos.up(),
             Direction::East => self.pos.right(),
             Direction::South => self.pos.down(),
             Direction::West => self.pos.left(),
         };
+
+        self.dir = direction;
     }
 }
