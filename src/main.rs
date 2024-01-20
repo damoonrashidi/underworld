@@ -25,7 +25,7 @@ fn main() -> Result<(), String> {
 
     let map = Map::from(include_str!("../maps/home.txt"));
 
-    let mut player = Player::new(coord::Coord(0, 0));
+    let mut player = Player::new(coord::Coord(40, 40));
     let sword = Sword::new(5, Duration::from_millis(200));
     player.add_item(sword.get_id());
 
@@ -60,6 +60,7 @@ fn main() -> Result<(), String> {
                 } => {
                     let mut state = state.borrow_mut();
                     state.player.walk(Direction::West);
+                    state.origin.0 = state.origin.0.saturating_sub(1);
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Up),
@@ -67,6 +68,7 @@ fn main() -> Result<(), String> {
                 } => {
                     let mut state = state.borrow_mut();
                     state.player.walk(Direction::North);
+                    state.origin.1 = state.origin.1.saturating_sub(1);
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Right),
@@ -74,6 +76,7 @@ fn main() -> Result<(), String> {
                 } => {
                     let mut state = state.borrow_mut();
                     state.player.walk(Direction::East);
+                    state.origin.0 = state.origin.0.saturating_add(1);
                 }
                 Event::KeyDown {
                     keycode: Some(Keycode::Down),
@@ -81,6 +84,7 @@ fn main() -> Result<(), String> {
                 } => {
                     let mut state = state.borrow_mut();
                     state.player.walk(Direction::South);
+                    state.origin.1 = state.origin.1.saturating_add(1);
                 }
                 Event::Quit { .. }
                 | Event::KeyDown {
@@ -96,16 +100,15 @@ fn main() -> Result<(), String> {
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         canvas.clear();
 
-        let sb = state.borrow();
+        let origin = state.borrow().origin;
+        let map = state.borrow().map.clone();
 
-        for tile in sb.map.clone().tiles {
-            tile.render(&sb.origin, &mut canvas)?;
+        for tile in map.tiles {
+            tile.render(&origin, &mut canvas)?;
         }
+
         canvas.set_draw_color(Color::RGB(0, 120, 0));
-        state
-            .borrow_mut()
-            .player
-            .render(&state.borrow().origin, &mut canvas)?;
+        state.borrow_mut().player.render(&origin, &mut canvas)?;
 
         canvas.present();
         std::thread::sleep(Duration::from_millis(16));
