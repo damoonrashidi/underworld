@@ -1,31 +1,35 @@
-use self::tiletype::TileType;
+use self::{tile::Tile, tiletype::TileType};
 
 pub mod coord;
 pub mod direction;
 pub mod tile;
 pub mod tiletype;
 
-#[derive(Debug)]
-pub struct Map<'a> {
-    tiles: Vec<Vec<TileType>>,
-    visible_tiles: &'a mut [TileType],
-    seen_tiles: &'a mut [TileType],
+#[derive(Debug, Clone)]
+pub struct Map {
+    pub tiles: Vec<Tile>,
 }
 
-impl<'a> Map<'a> {}
+impl Map {}
 
-impl<'a> From<&str> for Map<'a> {
+impl From<&str> for Map {
     fn from(value: &str) -> Self {
-        let tiles: Vec<Vec<TileType>> = value
+        let tiles: Vec<Tile> = value
             .trim()
             .lines()
-            .map(|line| line.chars().map(TileType::from).collect())
+            .enumerate()
+            .flat_map(|(row, line)| {
+                line.chars()
+                    .enumerate()
+                    .map(|(col, kind)| Tile {
+                        pos: coord::Coord(row, col),
+                        kind: TileType::from(kind),
+                        state: tile::TileState::Unseen,
+                    })
+                    .collect::<Vec<Tile>>()
+            })
             .collect();
 
-        Self {
-            tiles,
-            visible_tiles: &mut [],
-            seen_tiles: &mut [],
-        }
+        Self { tiles }
     }
 }

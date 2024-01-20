@@ -27,7 +27,7 @@ impl Item for Sword {
 
 impl Entity for Sword {
     fn on_tick(&mut self) {
-        self.cooldown = self.cooldown.saturating_sub(Duration::from_millis(8));
+        self.cooldown = self.cooldown.saturating_sub(Duration::from_millis(16));
     }
 
     fn get_id(&self) -> String {

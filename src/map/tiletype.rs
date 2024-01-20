@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum TileType {
     Empty,
     Ground,
@@ -14,7 +14,6 @@ pub enum TileType {
 impl From<char> for TileType {
     fn from(value: char) -> Self {
         match value {
-            '-' => Self::Empty,
             '.' => Self::Ground,
             '"' => Self::Grass,
             '*' => Self::Bush,
@@ -23,7 +22,7 @@ impl From<char> for TileType {
             '#' => Self::Wall,
             'A' => Self::Door,
             '~' => Self::Water,
-            _ => unreachable!(),
+            _ => Self::Empty,
         }
     }
 }

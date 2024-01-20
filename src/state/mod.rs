@@ -1,9 +1,10 @@
-use crate::{action::Action, character::player::Player, entity::Entity};
+use crate::{action::Action, character::player::Player, entity::Entity, map::Map};
 use std::{cell::RefCell, fmt::Debug, rc::Rc};
 
 pub struct State {
     pub player: Player,
     pub entities: Vec<Rc<RefCell<dyn Entity>>>,
+    pub map: Map,
 }
 
 impl State {
@@ -12,11 +13,16 @@ impl State {
         Rc::new(RefCell::new(State {
             player,
             entities: vec![],
+            map: Map { tiles: vec![] },
         }))
     }
 
     pub fn add_entity(&mut self, entity: Rc<RefCell<dyn Entity>>) {
         self.entities.push(entity);
+    }
+
+    pub fn set_map(&mut self, map: Map) {
+        self.map = map;
     }
 
     #[allow(clippy::needless_pass_by_value)]

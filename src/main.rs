@@ -6,7 +6,7 @@ use underworld::{
     character::{player::Player, Character},
     entity::{renderable::Renderable, Entity},
     item::sword::Sword,
-    map::{coord, direction::Direction},
+    map::{coord, direction::Direction, Map},
     state::State,
 };
 
@@ -23,13 +23,17 @@ fn main() -> Result<(), String> {
 
     let mut canvas = window.into_canvas().build().map_err(|e| e.to_string())?;
 
+    let map = Map::from(include_str!("../maps/home.txt"));
+
     let mut player = Player::new(coord::Coord(0, 0));
     let sword = Sword::new(5, Duration::from_millis(200));
     player.add_item(sword.get_id());
 
     let state = State::new(player);
-
-    state.borrow_mut().add_entity(Rc::new(RefCell::new(sword)));
+    let mut prep = state.borrow_mut();
+    prep.add_entity(Rc::new(RefCell::new(sword)));
+    prep.set_map(map);
+    drop(prep);
 
     let mut event_pump = ctx.event_pump()?;
 
@@ -92,11 +96,14 @@ fn main() -> Result<(), String> {
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         canvas.clear();
 
+        for tile in state.borrow().map.clone().tiles {
+            tile.render(&mut canvas)?;
+        }
         canvas.set_draw_color(Color::RGB(0, 120, 0));
         state.borrow_mut().player.render(&mut canvas)?;
 
         canvas.present();
-        std::thread::sleep(Duration::from_millis(10));
+        std::thread::sleep(Duration::from_millis(16));
     }
 
     Ok(())
