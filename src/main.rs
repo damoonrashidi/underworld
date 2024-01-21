@@ -14,7 +14,7 @@ fn main() -> Result<(), String> {
     let ctx = sdl2::init()?;
     let video_subsystem = ctx.video()?;
     let window = video_subsystem
-        .window("Underworld", 800, 600)
+        .window("Underworld", 800, 800)
         .position_centered()
         .opengl()
         .allow_highdpi()
@@ -25,7 +25,7 @@ fn main() -> Result<(), String> {
 
     let map = Map::from(include_str!("../maps/home.txt"));
 
-    let mut player = Player::new(coord::Coord(40, 40));
+    let mut player = Player::new(coord::Coord(0, 0));
     let sword = Sword::new(5, Duration::from_millis(200));
     player.add_item(sword.get_id());
 
@@ -104,7 +104,9 @@ fn main() -> Result<(), String> {
         let map = state.borrow().map.clone();
 
         for tile in map.tiles {
-            tile.render(&origin, &mut canvas)?;
+            if Map::tile_is_in_viewport(&tile, &origin) {
+                tile.render(&origin, &mut canvas)?;
+            }
         }
 
         canvas.set_draw_color(Color::RGB(0, 120, 0));

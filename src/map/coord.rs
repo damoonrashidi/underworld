@@ -21,4 +21,10 @@ impl Coord {
     pub fn right(&self) -> Coord {
         Coord(self.0.saturating_add(1), self.1)
     }
+
+    #[must_use]
+    pub fn distance(&self, other: &Coord) -> f32 {
+        #[allow(clippy::cast_precision_loss)]
+        (((self.0.abs_diff(other.0)).pow(2) + (self.1.abs_diff(other.1)).pow(2)) as f32).sqrt()
+    }
 }

@@ -20,7 +20,7 @@ impl State {
         Rc::new(RefCell::new(State {
             player,
             entities: vec![],
-            map: Map { tiles: vec![] },
+            map: Map::new(),
             origin,
         }))
     }
